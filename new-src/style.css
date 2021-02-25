@@ -1,0 +1,42 @@
+main {
+  display: flex;
+}
+
+
+section {
+  width: 400px;
+}
+
+.column {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+}
+
+.lists {
+  display: flex;
+}
+
+#sortable1{
+    height: 100vh;
+    background-color:greenyellow
+}
+
+#sortable2{
+    background-color:greenyellow
+}
+
+#sortable3{
+    background-color:greenyellow
+}
+
+.list-body {
+  height: 100%;
+}
+
+.kanban-card {
+  background-color: #2196f3;
+  height: 100px;
+  width: 100%;
+}

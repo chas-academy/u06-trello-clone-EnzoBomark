@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">;
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <title>Trello Clone</title>
+</head>
+<body>
+    
+    <!-- Header elements -->
+    <header>
+        <div class="controls p-3">
+            <form class="form-inline">
+                <label for="titleInput">Title:</label>
+                <input class="" type="text" name="title" id="titleInput" autocomplete="off">
+                <label for="descriptionInput">Description:</label>
+                <input class="" type="text" name="description" id="descriptionInput" autocomplete="off">
+                <button class="" id="add">Add</button>
+                <button class="" id="deleteAll">Delete All</button>
+            </form>
+        </div>
+    </header>
+    
+    <!-- Board elements -->
+    <div class="boards" id="boardsContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script
+    src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+    integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+    crossorigin="anonymous"></script>
+    <script src="script.js" defer></script>
+</body>
+</html>

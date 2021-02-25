@@ -1,0 +1,86 @@
+html {
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  background-color: #FFFF;
+}
+
+.boards {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  height: 100%;
+  width: 100%;
+  border-top: 1px solid #d4d4d4;
+}
+
+.board {
+  margin: 2px;
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.kanbanZone {
+  background-color: red;
+  padding: 16px;
+  min-width: 300px;
+  min-height: 200px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+}
+
+.kanbanCard {
+  -webkit-user-select: all;
+     -moz-user-select: all;
+      -ms-user-select: all;
+          user-select: all;
+  background-color: #FFFF;
+  padding: 16px;
+  width: 250px;
+  margin: auto;
+  margin-bottom: 2rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.red {
+  background-color: #F87171;
+}
+
+.yellow {
+  background-color: #FCD34D;
+}
+
+.green {
+  background-color: #34D399;
+}
+
+.blue {
+  background-color: #60A5FA;
+}
+
+.is-dragging {
+  opacity: .3;
+}
+/*# sourceMappingURL=style.css.map */
