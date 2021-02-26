@@ -15,6 +15,7 @@ let dataCards = {
 
 //initialize
 $(document).ready(()=>{
+
     // Create Kanban Board
     initializeKanbanBoards();
     // Display cards inside localStorage
@@ -37,6 +38,7 @@ $(document).ready(()=>{
                 title,
                 description,
                 position:"red",
+                order: 0,
                 priority: false
             };
             dataCards.cards.push(newCard);
@@ -50,9 +52,43 @@ $(document).ready(()=>{
         dataCards.cards = [];
         save();
     });
+
+    $(function() {
+        $(".kanbanZone")
+          .sortable({
+            connectWith: ".kanbanZone",
+            opacity: 0.8, 
+            receive: function( event, ui ) {
+                ui.item[0].classList.remove('red', 'yellow', 'green', 'blue');
+                ui.item[0].classList.add(this.id);
+
+                const index = dataCards.cards.findIndex(card => card.id === parseInt(ui.item[0].id));
+                dataCards.cards[index].position = this.id;
+                save();
+              },
+            stop: function () {
+                var strItems = "";
+
+                $(".kanbanZone").children().each(function (i) {
+                    var li = $(this);
+                    strItems += li.attr("id") + ',' + i + ' ';
+                });
+
+                console.log(strItems);
+            }
+          })
+        .disableSelection();
+    });
 });
 
 //functions
+
+const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
+
+const initializeComponents = (dataArray) => dataArray.cards.forEach(card=>{ appendComponents(card) });
+
+const save = () => localStorage.setItem('@data', JSON.stringify(dataCards));
+
 const initializeKanbanBoards = () => {
     dataColors.forEach(item=>{
         const htmlElements = 
@@ -62,38 +98,14 @@ const initializeKanbanBoards = () => {
         </div>`
         $("#boardsContainer").append(htmlElements)
     });
-    
-    const dropzones = document.querySelectorAll('.kanbanZone');
-    dropzones.forEach(zone=>{
-        zone.addEventListener('dragenter', dragenter);
-        zone.addEventListener('dragover', dragover);
-        zone.addEventListener('dragleave', dragleave);
-        zone.addEventListener('drop', drop);
-    });
-};
-
-const initializeCards = () =>{
-    cards = document.querySelectorAll('.kanbanCard');
-    
-    cards.forEach(card=>{
-        card.addEventListener('dragstart', dragstart);
-        card.addEventListener('drag', drag);
-        card.addEventListener('dragend', dragend);
-    });
-};
-
-const initializeComponents = (dataArray) =>{
-    dataArray.cards.forEach(card=>{
-        appendComponents(card); 
-    });
 };
 
 const appendComponents = (card) =>{
     //creates new card inside of the todo area
     const htmlElements = `
-        <div id=${card.id.toString()} class="kanbanCard ${card.position}" draggable="true">
+        <div id=${card.id.toString()} class="kanbanCard ${card.position}">
 
-            <span id="span-${card.id.toString()}" onclick="togglePriority(event)" class="material-icons priority ${card.priority? "is-priority": ""}">
+            <span id="span-${card.id.toString()}" onclick="togglePriority(e)" class="material-icons priority ${card.priority? "is-priority": ""}">
             star
             </span>
 
@@ -110,7 +122,6 @@ const appendComponents = (card) =>{
         </div>
     `
     $(`#${card.position}`).append(htmlElements);
-    priorities = document.querySelectorAll(".priority");
 }
 
 const togglePriority = (e) => {
@@ -132,43 +143,3 @@ const deleteCard = (id) =>{
         }
     })
 }
-
-const removeClasses = (cardBeignDragged, color) =>{
-    cardBeignDragged.classList.remove('red', 'yellow', 'green', 'blue');
-    cardBeignDragged.classList.add(color);
-    position(cardBeignDragged, color);
-}
-
-const position = (cardBeignDragged, color) =>{
-    const index = dataCards.cards.findIndex(card => card.id === parseInt(cardBeignDragged.id));
-    dataCards.cards[index].position = color;
-    save();
-}
-
-//cards
-const dragover = function() {
-    this.classList.add('over');
-    cardBeignDragged = document.querySelector('.is-dragging');
-
-    if(this.id ==="red")removeClasses(cardBeignDragged, "red");
-    else if(this.id ==="yellow")removeClasses(cardBeignDragged, "yellow");
-    else if(this.id ==="green")removeClasses(cardBeignDragged, "green");
-    else if(this.id ==="blue")removeClasses(cardBeignDragged, "blue");
-    
-    this.appendChild(cardBeignDragged);
-}
-
-const dragstart = function() {this.classList.add('is-dragging')};
-
-const dragend = function() {this.classList.remove('is-dragging')};
-
-const save = () => localStorage.setItem('@data', JSON.stringify(dataCards));
-
-const dragleave = () => this.classList?.remove('over');
-
-const drop = () => this.classList?.remove('over');
-
-const drag = ()=>{};
-
-const dragenter = () =>{};
-
