@@ -8,23 +8,25 @@ let dataColors = [
 ];
 let dataCards = {
     config:{
-        maxid:0
+        maxid:-1
     },
     cards:[]
 };
 
 //initialize
 $(document).ready(()=>{
-
     // Create Kanban Board
     initializeKanbanBoards();
     // Display cards inside localStorage
     if(JSON.parse(localStorage.getItem('@data'))){
         dataCards = JSON.parse(localStorage.getItem('@data'));
-        initializeComponents(dataCards);
+        console.log(dataCards);
+        
+        bords = JSON.parse(localStorage.getItem('@order'));
+
+        initializeComponents(dataCards, bords);
     }
     
-    initializeCards();
     $('#add').click(()=>{
         // Create Title if it isn't empty
         const title = $('#titleInput').val()!==''?$('#titleInput').val():null;
@@ -38,56 +40,86 @@ $(document).ready(()=>{
                 title,
                 description,
                 position:"red",
-                order: 0,
                 priority: false
             };
             dataCards.cards.push(newCard);
             dataCards.config.maxid = id;
-            save();
+
+            sortable();
+            saveCards(dataCards);
             appendComponents(newCard);
             initializeCards();
         }
     });
+    
     $("#deleteAll").click(()=>{
         dataCards.cards = [];
-        save();
+        dataCards.config.maxid = 0;
+        localStorage.clear();
+        saveCards(dataCards);
     });
-
-    $(function() {
-        $(".kanbanZone")
-          .sortable({
-            connectWith: ".kanbanZone",
-            opacity: 0.8, 
-            receive: function( event, ui ) {
-                ui.item[0].classList.remove('red', 'yellow', 'green', 'blue');
-                ui.item[0].classList.add(this.id);
-
-                const index = dataCards.cards.findIndex(card => card.id === parseInt(ui.item[0].id));
-                dataCards.cards[index].position = this.id;
-                save();
-              },
-            stop: function () {
-                var strItems = "";
-
-                $(".kanbanZone").children().each(function (i) {
-                    var li = $(this);
-                    strItems += li.attr("id") + ',' + i + ' ';
-                });
-
-                console.log(strItems);
-            }
-          })
-        .disableSelection();
-    });
+    
+    initializeCards();
+    sortable();
 });
 
 //functions
+const sortable = () => {
+   
+    $(function() {
+        $(".kanbanZone")
+            .sortable({
+                connectWith: ".kanbanZone",
+                opacity: 0.8, 
+                receive: function( event, ui ) {
+                    ui.item[0].classList.remove('red', 'yellow', 'green', 'blue');
+                    ui.item[0].classList.add(this.id);
+
+                    const index = dataCards.cards.findIndex(card => card.id === parseInt(ui.item[0].id));
+                    dataCards.cards[index].position = this.id;
+                    saveCards(dataCards);
+                },
+                stop: function () {
+                    let bords = [
+                    $('#red').sortable("toArray"), 
+                    $('#yellow').sortable("toArray"),
+                    $('#green').sortable("toArray"),
+                    $('#blue').sortable("toArray"),
+                    ];
+
+                    saveOrder(bords);
+                }
+            })
+        .disableSelection();
+
+        let bords = [
+            $('#red').sortable("toArray"), 
+            $('#yellow').sortable("toArray"),
+            $('#green').sortable("toArray"),
+            $('#blue').sortable("toArray"),
+            ];
+
+            saveOrder(bords);
+    });
+};
 
 const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
 
-const initializeComponents = (dataArray) => dataArray.cards.forEach(card=>{ appendComponents(card) });
+const initializeComponents = (dataArray, bords) =>  {
+    console.log(bords)
+    if(bords !== null){
+        for(let i = 0; i < bords.length; i++) {
+            let bord = bords[i];
+            for(var j = 0; j < bord.length; j++) {
+                appendComponents(dataArray.cards[bord[j] - 1]);
+            }
+        }
+    }
+};
 
-const save = () => localStorage.setItem('@data', JSON.stringify(dataCards));
+const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
+const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
+
 
 const initializeKanbanBoards = () => {
     dataColors.forEach(item=>{
@@ -118,7 +150,7 @@ const appendComponents = (card) =>{
                         DELETE
                     </span>
                 </button>
-            </from>
+            </form>
         </div>
     `
     $(`#${card.position}`).append(htmlElements);
@@ -131,15 +163,20 @@ const togglePriority = (e) => {
             card.priority=card.priority?false:true;
         }
     })
-    save();
+    saveCards(dataCards);
 }
 
 const deleteCard = (id) =>{
-    dataCards.cards.forEach(card=>{
-        if(card.id === id){
-            let index = dataCards.cards.indexOf(card);
-            dataCards.cards.splice(index, 1);
-            save();
+    bords = JSON.parse(localStorage.getItem('@order'));
+    if(bords !== null){
+        for(let i = 0; i < bords.length; i++) {
+            let bord = bords[i];
+            for(var j = 0; j < bord.length; j++) {
+                if(id === parseInt(bord[j])){
+                    bords[i].splice(j, 1);
+                    return saveOrder(bords);
+                }
+            }
         }
-    })
+    }
 }
