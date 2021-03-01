@@ -1,0 +1,105 @@
+* {
+  border: none;
+  outline: none;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  background-color: #FFFF;
+  max-height: 100vh;
+}
+
+.boards {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+  border-top: 1px solid #d4d4d4;
+}
+
+.board {
+  margin-top: 20px;
+  border-radius: 5px;
+  background-color: #fafafa;
+  padding-top: 10px;
+  width: 270px;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100vh;
+}
+
+.kanbanCard {
+  background-color: white;
+  -webkit-user-select: all;
+     -moz-user-select: all;
+      -ms-user-select: all;
+          user-select: all;
+  padding: 16px;
+  width: 250px;
+  margin: auto;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.red {
+  border-top: 3px solid #4F46E5;
+}
+
+.yellow {
+  border-top: 3px solid #6366F1;
+}
+
+.green {
+  border-top: 3px solid #818CF8;
+}
+
+.blue {
+  border-top: 3px solid #A5B4FC;
+}
+
+.is-dragging {
+  opacity: .3;
+}
+
+.ui-sortable-placeholder {
+  opacity: 0.3;
+  visibility: visible !important;
+  height: 85px !important;
+}
+
+.no-close .ui-dialog-titlebar-close {
+  position: fixed;
+  background-color: black;
+  opacity: 0.7;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  cursor: pointer;
+}
+
+.ui-front {
+  z-index: 1000 !important;
+}
+
+.dialog {
+  background-color: white;
+  padding: 16px;
+  border-radius: 10px;
+}
+/*# sourceMappingURL=style.css.map */
