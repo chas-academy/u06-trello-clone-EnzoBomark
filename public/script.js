@@ -1,18 +1,13 @@
 //variables
 let dropzones = document.querySelectorAll('.dropzone');
+let dataCards = {config:{ maxid:-1 }, cards:[] };
+let bords = [];
 let dataColors = [
     {color:"red", title:"to do"},
     {color:"yellow", title:"in progress"},
     {color:"green", title:"testing"},
     {color:"blue", title:"done"},
 ];
-let dataCards = {
-    config:{
-        maxid:-1
-    },
-    cards:[]
-};
-let bords = [];
 
 //initialize
 $(document).ready(()=>{
@@ -98,8 +93,6 @@ const sortable = () => {
     });
 };
 
-const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
-
 const initializeComponents = (dataArray, bords) =>  {
     if(bords !== null){
         for(let i = 0; i < bords.length; i++) {
@@ -110,11 +103,6 @@ const initializeComponents = (dataArray, bords) =>  {
         }
     }
 };
-
-const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
-
-const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
-
 
 const initializeKanbanBoards = () => {
     
@@ -203,17 +191,15 @@ const appendComponents = (card) =>{
 
     $(`#${card.position}`).append(htmlElements);
     $(`#body`).append(dialogElements);
-}
+};
 
 const togglePriority = (span) => {
     span.classList.toggle("is-priority");
     dataCards.cards.forEach(card=>{
-        if(span.id.split('-')[1] === card.id.toString()){
-            card.priority=card.priority?false:true;
-        }
+        if(span.id.split('-')[1] === card.id.toString()) card.priority=card.priority?false:true;
     })
     saveCards(dataCards);
-}
+};
 
 const deleteCard = (id) =>{
     bords = JSON.parse(localStorage.getItem('@order'));
@@ -228,7 +214,7 @@ const deleteCard = (id) =>{
             }
         }
     }
-}   
+}; 
 
 const dialogWiget = () =>{
 
@@ -271,11 +257,18 @@ const dialogWiget = () =>{
             
         } );
     });
-}
+};
 
 const updateDescription = (newText, id) => {
     dataCards.cards[id].description = newText;
     saveCards(dataCards);
-}
+};
+
+const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
+
+const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
+
+const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
+
 
 
