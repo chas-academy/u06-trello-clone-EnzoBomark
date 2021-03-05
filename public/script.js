@@ -12,9 +12,11 @@ let dataCards = {
     },
     cards:[]
 };
+let bords = [];
 
 //initialize
 $(document).ready(()=>{
+
     // Create Kanban Board
     initializeKanbanBoards();
     // Display cards inside localStorage
@@ -36,6 +38,7 @@ $(document).ready(()=>{
                 id,
                 title,
                 description,
+                date: false,
                 position:"red",
                 priority: false
             };
@@ -49,13 +52,7 @@ $(document).ready(()=>{
         }
     });
     
-    $("#deleteAll").click(()=>{
-        dataCards.cards = [];
-        dataCards.config.maxid = 0;
-        localStorage.clear();
-        saveCards(dataCards);
-    });
-
+    $("#deleteAll").click(() => localStorage.clear());
     dialogWiget();
     initializeCards();
     sortable();
@@ -138,24 +135,38 @@ const appendComponents = (card) =>{
         <div id=${card.id.toString()} class="relative kanbanCard ${card.position}" onclick="dialogWiget(${card.id.toString()})">
             <h4 class="text-xl font-medium">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
             <p class="text-sm mt-1 font-normal">${(card.description != null) ? ((card.description.length < 24) ? card.description : card.description.substring(0,24) + "...") : "" }</p>
-            <span class="text-sm font-light absolute right-3 top-3">${(card.priority) ? "star" : "no"}</span>
+            <p class="text-xs mt-5 font-light text-gray-400">${(card.date) ? card.date : 'No Due Date'}</p>
+            <span class="text-sm font-light absolute right-3 top-3">
+                <svg
+                class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-100"}"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                >
+                <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                />
+                </svg>
+            </span>
         </div>
     `
 
     const dialogElements = `
         <div id="dialog-${card.id.toString()}" class="dialog relative">
-                <button id="span-${card.id.toString()}" onclick="togglePriority(this)" class="absolute left-5 top-5  inline-block p-3 text-center text-white transition border border-yellow-500 rounded-full ripple hover:bg-yellow-100 focus:outline-none ${card.priority? "is-priority": ""}">
-                    <svg
-                    class="w-5 h-5 text-yellow-500"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    >
-                    <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                    />
-                    </svg>
-                </button>
+                <form>
+                    <button id="span-${card.id.toString()}" onclick="togglePriority(this)" class="absolute left-5 top-5  inline-block p-3 text-center text-white transition border ${(card.priority) ? "border-yellow-400" : "border-yellow-200"} rounded-full ripple hover:bg-yellow-100 focus:outline-none ${card.priority? "is-priority": ""}">
+                        <svg
+                        class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-200"} "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        >
+                        <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                        />
+                        </svg>
+                    </button>
+                </form>
                 
                 <h4 class="text-3xl px-16 py-2">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
                 
@@ -174,15 +185,17 @@ const appendComponents = (card) =>{
                 </ul>
             
             <div id="tabs-1-${card.id.toString()}">
-                <p class="text-md px-10 py-5" contenteditable="true" onblur="updateDescription(this.innerHTML.toString(), ${card.id.toString()})" onkeypress="return (this.innerText.length <= 512)">${card.description}</p>
+                <textarea class="resize-none text-md rounded-md px-8 py-5 bg-gray-100 w-full mt-3 h-80" contenteditable="true" onblur="updateDescription(this.value.toString(), ${card.id.toString()})">${card.description}</textarea>
                 <div class="w-3/12 absolute left-5 bottom-5">
-                    <input class="w-11/12 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-black rounded shadow ripple waves-light hover:shadow-lg focus:outline-none hover:bg-black" type="text" id="datepicker-${card.id.toString()}" placeholder="Date">
+                    <input class="w-11/12 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-black rounded shadow ripple waves-light hover:shadow-lg focus:outline-none cursor-pointer placeholder-white" type="text" id="datepicker-${card.id.toString()}" placeholder="${(dataCards.cards[card.id].date) ? dataCards.cards[card.id].date : 'Date'}">
                 </div>
             </div>
             
             <div id="tabs-2-${card.id.toString()}">
-                <form>
-                    <button onclick="deleteCard(${card.id.toString()})">delete</button>
+                <p class="text-center font-bold mt-16">Are you sure you want to DELETE this card?</p>
+                <p class="text-center">Once deleted their is no return</p>
+                <form class="flex justify-center mt-8">
+                    <button class="inline-block w-10/12 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-red-500 rounded shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none" onclick="deleteCard(${card.id.toString()})">delete</button>
                 </form>
             </div>
         </div>
@@ -215,7 +228,7 @@ const deleteCard = (id) =>{
             }
         }
     }
-}
+}   
 
 const dialogWiget = () =>{
 
@@ -248,7 +261,14 @@ const dialogWiget = () =>{
           } );
 
         $( function() {
-            $(`#datepicker-${card.id}`).datepicker();
+            $(`#datepicker-${card.id}`).datepicker({
+                onSelect: function() { 
+                    dataCards.cards[card.id].date = this.value;
+                    console.log(dataCards.cards[card.id].date);
+                    saveCards(dataCards);
+                }
+            });
+            
         } );
     });
 }
