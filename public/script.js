@@ -34,6 +34,8 @@ $(document).ready(()=>{
                 title,
                 description,
                 date: false,
+                color:'#E5E7EB',
+                class: 'bg-gray-200',
                 position:"red",
                 priority: false
             };
@@ -48,6 +50,8 @@ $(document).ready(()=>{
     });
     
     $("#deleteAll").click(() => localStorage.clear());
+    tooltip();
+    progressWidget();
     dialogWiget();
     initializeCards();
     sortable();
@@ -78,6 +82,7 @@ const sortable = () => {
                     ];
 
                     saveOrder(bords);
+                    progressWidget();
                 }
             })
         .disableSelection();
@@ -90,6 +95,7 @@ const sortable = () => {
             ];
 
             saveOrder(bords);
+            progressWidget();
     });
 };
 
@@ -108,7 +114,7 @@ const initializeKanbanBoards = () => {
     
     dataColors.forEach(item=>{
         const htmlElements = 
-        `<div class="board mx-1">
+        `<div class="board">
             <h3 class="text-sm font-bold ml-3">${item.title.toUpperCase()}</h3>
             <div class="kanbanZone h-full mt-4" id="${item.color}"></div>
         </div>`
@@ -136,11 +142,15 @@ const appendComponents = (card) =>{
                 />
                 </svg>
             </span>
+
+            <div class="absolute bottom-3 right-3 h-3 w-3 rounded-full ${card.class}"></div>
+
         </div>
     `
 
     const dialogElements = `
         <div id="dialog-${card.id.toString()}" class="dialog relative">
+
                 <form>
                     <button id="span-${card.id.toString()}" onclick="togglePriority(this)" class="absolute left-5 top-5  inline-block p-3 text-center text-white transition border ${(card.priority) ? "border-yellow-400" : "border-yellow-200"} rounded-full ripple hover:bg-yellow-100 focus:outline-none ${card.priority? "is-priority": ""}">
                         <svg
@@ -159,7 +169,7 @@ const appendComponents = (card) =>{
                 <h4 class="text-3xl px-16 py-2">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
                 
                 <ul> 
-                    <li><a class="absolute right-5 top-5 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-indigo-500 rounded shadow ripple hover:shadow-lg hover:bg-indigo-600 focus:outline-none" href="#tabs-1-${card.id.toString()}">Main</a></li>
+                    <li><a class="absolute right-5 top-5 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-green-500 rounded shadow ripple hover:shadow-lg hover:bg-green-600 focus:outline-none" href="#tabs-1-${card.id.toString()}">Main</a></li>
                     <li><a href="#tabs-2-${card.id.toString()}" class="right-5 bottom-5 absolute inline-block p-3 text-center text-white transition bg-red-500 rounded-full shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none">
                     
                     <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -173,15 +183,16 @@ const appendComponents = (card) =>{
                 </ul>
             
             <div id="tabs-1-${card.id.toString()}">
-                <textarea class="resize-none text-md rounded-md px-8 py-5 bg-gray-100 w-full mt-3 h-80" contenteditable="true" onblur="updateDescription(this.value.toString(), ${card.id.toString()})">${card.description}</textarea>
+                <textarea class="resize-none text-md rounded-md px-8 py-5 bg-gray-100 w-full my-3 h-72" contenteditable="true" onblur="updateDescription(this.value.toString(), ${card.id.toString()})">${card.description}</textarea>
                 <div class="w-3/12 absolute left-5 bottom-5">
                     <input class="w-11/12 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-black rounded shadow ripple waves-light hover:shadow-lg focus:outline-none cursor-pointer placeholder-white" type="text" id="datepicker-${card.id.toString()}" placeholder="${(dataCards.cards[card.id].date) ? dataCards.cards[card.id].date : 'Date'}">
                 </div>
+                <div id="my-widget-${card.id}" class="absolute left-36 bottom-4"></div>
             </div>
             
             <div id="tabs-2-${card.id.toString()}">
                 <p class="text-center font-bold mt-16">Are you sure you want to DELETE this card?</p>
-                <p class="text-center">Once deleted their is no return</p>
+                <p class="text-center">Once deleted there is no return</p>
                 <form class="flex justify-center mt-8">
                     <button class="inline-block w-10/12 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-red-500 rounded shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none" onclick="deleteCard(${card.id.toString()})">delete</button>
                 </form>
@@ -250,14 +261,98 @@ const dialogWiget = () =>{
             $(`#datepicker-${card.id}`).datepicker({
                 onSelect: function() { 
                     dataCards.cards[card.id].date = this.value;
-                    console.log(dataCards.cards[card.id].date);
                     saveCards(dataCards);
                 }
             });
             
         } );
+
+        //Custom widget
+        $( function() {
+            $.widget( "custom.colorize", {
+                
+                _create: function() { 
+                    this._button = $("<button>", { "class": "rounded-full focus:outline-none"}); 
+                    this._button.width(this.options.width) 
+                    this._button.height(this.options.height) 
+                    this._button.css("background-color", this.options.color);    
+                    $(this.element).append(this._button);
+
+                    this._on( this._button, {
+                        // _on won't call random when widget is disabled
+                        click: "random"
+                      });
+                    
+                 },
+                 _setOption: function(key, value) { 
+                    switch (key) { 
+                       case "width": 
+                       this._button.width(value); 
+                       break; 
+                       case "height": 
+                       this._button.height(value); 
+                       break; 
+                       case "color":
+                       this._button.css("background-color",value);
+                       break; 
+                    } 
+                 },
+
+                 random: function(  ) {
+                    colors = [
+                        ['#6B7280', 'bg-gray-500'],
+                        ['#EF4444', 'bg-red-500'],
+                        ['#F59E0B', 'bg-yellow-500'],
+                        ['#10B981', 'bg-green-500'],
+                        ['#3B82F6', 'bg-blue-500'],
+                    ];
+
+                    let randomColor = colors[Math.floor(Math.random()*colors.length)];
+
+                    while (randomColor[0] == dataCards.cards[card.id].color) {
+                        randomColor = colors[Math.floor(Math.random() * colors.length)];
+                    }
+
+                    
+                    this._button.css("background-color", randomColor[0]); 
+                    dataCards.cards[card.id].color = randomColor[0];   
+                    dataCards.cards[card.id].class = randomColor[1];   
+                    saveCards(dataCards);
+                  },
+            });
+           
+            // Initialize with default options
+            $( `#my-widget-${card.id}` ).colorize();
+            $( `#my-widget-${card.id}` ).colorize("option", {width:30,height:30,color: dataCards.cards[card.id].color});
+         
+        });
     });
 };
+
+const progressWidget = () => {
+    let i = 0;
+    dataCards.cards.forEach(card => { 
+        if(card.position == 'blue')i++
+    });
+
+    let value = (i/dataCards.cards.length)*100;
+    if(value == 0) value = 0.1;
+
+    $( function() {
+
+        $( "#progressbar" ).progressbar({
+            value: value
+        });
+      } );
+}
+
+const tooltip = () => {
+    $( function() {
+        $( document ).tooltip({
+            tooltipClass: "tooltip",
+        });
+      } );
+}
 
 const updateDescription = (newText, id) => {
     dataCards.cards[id].description = newText;
@@ -269,6 +364,4 @@ const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
 const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
 
 const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
-
-
 
