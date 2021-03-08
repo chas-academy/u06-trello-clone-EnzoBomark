@@ -95,7 +95,6 @@ const sortable = () => {
             ];
 
             saveOrder(bords);
-            progressWidget();
     });
 };
 
@@ -217,7 +216,7 @@ const deleteCard = (id) =>{
     if(bords !== null){
         for(let i = 0; i < bords.length; i++) {
             let bord = bords[i];
-            for(var j = 0; j < bord.length; j++) {
+            for(let j = 0; j < bord.length; j++) {
                 if(id === parseInt(bord[j])){
                     bords[i].splice(j, 1);
                     return saveOrder(bords);
@@ -330,13 +329,22 @@ const dialogWiget = () =>{
 };
 
 const progressWidget = () => {
-    let i = 0;
-    dataCards.cards.forEach(card => { 
-        if(card.position == 'blue')i++
-    });
-
-    let value = (i/dataCards.cards.length)*100;
+    let completed = 0;
+    let total = 0;
+    if(bords !== null){
+        for(let i = 0; i < bords.length; i++) {
+            let bord = bords[i];
+            for(let j = 0; j < bord.length; j++) {
+                total++
+                if(dataCards.cards[bord[j]].position == 'blue') completed++;
+            }
+        }
+    }
+    
+    let value = (completed/total)*100;
     if(value == 0) value = 0.1;
+
+    console.log(value);
 
     $( function() {
 
