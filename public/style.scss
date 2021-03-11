@@ -43,19 +43,21 @@ main{
     font-size: 16px;
 }
 
+.gray{
+    border-top: 3px solid #6B7280; 
+}
 .red{
-    border-top: 3px solid #F87171; 
+    border-top: 3px solid #EF4444; 
 }
-.yellow{
-    border-top: 3px solid #FCD34D; 
+.yellow {
+    border-top: 3px solid #F59E0B; 
 }
-.green {
-    border-top: 3px solid #60A5FA; 
+.green{
+    border-top: 3px solid#10B981; 
 }
 .blue{
-    border-top: 3px solid#34D399; 
+  border-top: 3px solid#3B82F6; 
 }
-
 
 .ui-sortable-placeholder { 
     opacity: 0.4;
@@ -131,8 +133,6 @@ main{
     padding: 3px;
   }
 
-
-
   .ui-datepicker td span, .ui-datepicker td a {
     display: inline-block;
     text-align: center;
@@ -148,12 +148,12 @@ main{
 
   .ui-datepicker-calendar .ui-state-hover {
     color: white;
-    background: #6366F1;
+    background: #10B981;
   }
 
   .ui-datepicker-calendar .ui-state-active {
     color: white;
-    background: #6366F1;
+    background: #10B981;
   }
 
   .ui-progressbar {
@@ -172,7 +172,7 @@ main{
 
 .tooltip{
   background-color: white;
-  padding: 5px;
+  padding: 3px;
   border-radius: 0 5px 5px 5px;
   border: 1px solid black;
 }
