@@ -120,54 +120,34 @@ const appendComponents = (card) =>{
             <p class="text-sm mt-1 font-normal">${(card.description != null) ? ((card.description.length < 24) ? card.description : card.description.substring(0,24) + "...") : "" }</p>
             <p class="text-xs mt-5 font-light text-gray-400">${(card.date) ? card.date : 'No Due Date'}</p>
             <span class="text-sm font-light absolute right-3 top-3">
-                <svg
-                class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-100"}"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                >
-                <path
-                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                />
-                </svg>
+                <svg class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-100"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
             </span>
         </div>
     `
 
     const dialogElements = `
         <div id="dialog-${card.id.toString()}" class="dialog relative">
-
-                <form>
-                    <button id="span-${card.id.toString()}" onclick="togglePriority(this)" class="absolute left-5 top-5  inline-block p-3 text-center text-white transition border ${(card.priority) ? "border-yellow-400" : "border-yellow-200"} rounded-full ripple hover:bg-yellow-100 focus:outline-none ${card.priority? "is-priority": ""}">
-                        <svg
-                        class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-200"} "
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        >
-                        <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                        />
-                        </svg>
-                    </button>
-                </form>
-                
-                <h4 class="text-3xl px-16 py-2">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
-                
-                <ul> 
-                    <li><a class="absolute right-5 top-5 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-green-500 rounded shadow ripple hover:shadow-lg hover:bg-green-600 focus:outline-none" href="#tabs-1-${card.id.toString()}">Main</a></li>
-                    <li><a href="#tabs-2-${card.id.toString()}" class="right-5 bottom-5 absolute inline-block p-3 text-center text-white transition bg-red-500 rounded-full shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none">
-                    
-                    <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                    <path
-                        fill-rule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clip-rule="evenodd"
-                    />
-                    </svg>
-                </a></li>
-                </ul>
             
+            <!-- STAR --> 
+            <form>
+                <button id="span-${card.id.toString()}" onclick="togglePriority(this)" class="absolute left-5 top-5 p-3 text-center text-white transition border ${(card.priority) ? "border-yellow-400" : "border-yellow-200"} rounded-full ripple hover:bg-yellow-100 focus:outline-none ${card.priority? "is-priority": ""}">
+                    <svg class="w-5 h-5 ${(card.priority) ? "text-yellow-400" : "text-yellow-200"}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                </button>
+            </form>
+            
+            <h4 class="text-3xl px-16 py-2">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
+            
+            <!-- INTERNAL LINKS --> 
+            <ul> 
+                <li><a class="absolute right-5 top-5 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-green-500 rounded shadow ripple hover:shadow-lg hover:bg-green-600 focus:outline-none" href="#tabs-1-${card.id.toString()}">Main</a></li>
+                <li>
+                    <a href="#tabs-2-${card.id.toString()}" class="right-5 bottom-5 absolute p-3 text-center text-white transition bg-red-500 rounded-full shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none">
+                        <svg class="w-5 h-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"> <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- MAIN SIDE --> 
             <div id="tabs-1-${card.id.toString()}">
                 <textarea class="resize-none text-md rounded-md px-8 py-5 bg-gray-100 w-full my-3 h-72" contenteditable="true" onblur="updateDescription(this.value.toString(), ${card.id.toString()})">${card.description}</textarea>
                 <div class="flex w-5/12 justify-around absolute left-5 bottom-5">
@@ -176,6 +156,7 @@ const appendComponents = (card) =>{
                 </div>
             </div>
             
+            <!-- DELETE SIDE --> 
             <div id="tabs-2-${card.id.toString()}">
                 <p class="text-center font-bold mt-16">Are you sure you want to DELETE this card?</p>
                 <p class="text-center">Once deleted there is no return</p>
