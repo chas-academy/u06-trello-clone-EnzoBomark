@@ -1,12 +1,18 @@
 //variables
 let dropzones = document.querySelectorAll('.dropzone');
-let dataCards = {config:{ maxid:-1 }, cards:[] };
+let dataCards = {
+    order:[],
+    cards:[],
+    config: {
+        maxid:-1 
+    } 
+};
 let bords = [];
-let dataColors = [
-    {color:"red", title:"to do"},
-    {color:"yellow", title:"in progress"},
-    {color:"green", title:"testing"},
-    {color:"blue", title:"done"},
+let dataPositions = [
+    {pos:"one", title:"to do"},
+    {pos:"two", title:"in progress"},
+    {pos:"three", title:"testing"},
+    {pos:"four", title:"done"},
 ];
 
 //initialize
@@ -27,6 +33,7 @@ $(document).ready(()=>{
         // Create Description if it isn't empty
         const description = $('#descriptionInput').val()!==''?$('#descriptionInput').val():null;
         // Create Card if Title and Description isn't null
+        
         if(title && description){
             let id = dataCards.config.maxid+1;
             const newCard = {
@@ -35,8 +42,8 @@ $(document).ready(()=>{
                 description,
                 date: false,
                 color:'#E5E7EB',
-                class: 'bg-gray-200',
-                position:"red",
+                class: '',
+                position:"one",
                 priority: false
             };
             dataCards.cards.push(newCard);
@@ -51,7 +58,7 @@ $(document).ready(()=>{
     
     $("#deleteAll").click(() => localStorage.clear());
     tooltip();
-    progressWidget();
+    progressWidget(bords);
     dialogWiget();
     initializeCards();
     sortable();
@@ -66,66 +73,54 @@ const sortable = () => {
                 connectWith: ".kanbanZone",
                 opacity: 0.8, 
                 receive: function( event, ui ) {
-                    ui.item[0].classList.remove('red', 'yellow', 'green', 'blue');
-                    ui.item[0].classList.add(this.id);
-
-                    const index = dataCards.cards.findIndex(card => card.id === parseInt(ui.item[0].id));
-                    dataCards.cards[index].position = this.id;
+                    dataCards.cards[ui.item[0].id].position = this.id;
                     saveCards(dataCards);
                 },
                 stop: function () {
                     let bords = [
-                    $('#red').sortable("toArray"), 
-                    $('#yellow').sortable("toArray"),
-                    $('#green').sortable("toArray"),
-                    $('#blue').sortable("toArray"),
+                    $('#one').sortable("toArray"), 
+                    $('#two').sortable("toArray"),
+                    $('#three').sortable("toArray"),
+                    $('#four').sortable("toArray"),
                     ];
 
                     saveOrder(bords);
-                    progressWidget();
+                    progressWidget(bords);
                 }
             })
         .disableSelection();
-
         let bords = [
-            $('#red').sortable("toArray"), 
-            $('#yellow').sortable("toArray"),
-            $('#green').sortable("toArray"),
-            $('#blue').sortable("toArray"),
+            $('#one').sortable("toArray"), 
+            $('#two').sortable("toArray"),
+            $('#three').sortable("toArray"),
+            $('#four').sortable("toArray"),
             ];
 
             saveOrder(bords);
+
     });
 };
 
-const initializeComponents = (dataArray, bords) =>  {
-    if(bords !== null){
-        for(let i = 0; i < bords.length; i++) {
-            let bord = bords[i];
-            for(var j = 0; j < bord.length; j++) {
-                appendComponents(dataArray.cards[bord[j]]);
-            }
-        }
-    }
-};
-
 const initializeKanbanBoards = () => {
-    
-    dataColors.forEach(item=>{
+    dataPositions.forEach(item=>{
         const htmlElements = 
         `<div class="board">
             <h3 class="text-sm font-bold ml-3">${item.title.toUpperCase()}</h3>
-            <div class="kanbanZone h-full mt-4" id="${item.color}"></div>
+            <div class="kanbanZone h-full mt-4" id="${item.pos}"></div>
         </div>`
         $("#boardsContainer").append(htmlElements)
     });
 };
 
+const initializeComponents = (dataArray, bords) => bords.forEach(bord => bord.forEach(index => appendComponents(dataArray.cards[index])));
+
+const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
+
 const appendComponents = (card) =>{
     //creates new card inside of the todo area
 
     const htmlElements = `
-        <div id=${card.id.toString()} class="relative kanbanCard ${card.position}" onclick="dialogWiget(${card.id.toString()})">
+        <div id=${card.id.toString()} class="relative kanbanCard ${card.class}" onclick="dialogWiget(${card.id.toString()})">
             <h4 class="text-xl font-medium">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
             <p class="text-sm mt-1 font-normal">${(card.description != null) ? ((card.description.length < 24) ? card.description : card.description.substring(0,24) + "...") : "" }</p>
             <p class="text-xs mt-5 font-light text-gray-400">${(card.date) ? card.date : 'No Due Date'}</p>
@@ -141,9 +136,6 @@ const appendComponents = (card) =>{
                 />
                 </svg>
             </span>
-
-            <div class="absolute bottom-3 right-3 h-3 w-3 rounded-full ${card.class}"></div>
-
         </div>
     `
 
@@ -193,7 +185,7 @@ const appendComponents = (card) =>{
                 <p class="text-center font-bold mt-16">Are you sure you want to DELETE this card?</p>
                 <p class="text-center">Once deleted there is no return</p>
                 <form class="flex justify-center mt-8">
-                    <button class="inline-block w-10/12 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-red-500 rounded shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none" onclick="deleteCard(${card.id.toString()})">delete</button>
+                    <button class="inline-block w-10/12 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-red-500 rounded shadow ripple hover:shadow-lg hover:bg-red-600 focus:outline-none" onclick="deleteCard(${card.id})">delete</button>
                 </form>
             </div>
         </div>
@@ -212,19 +204,41 @@ const togglePriority = (span) => {
 };
 
 const deleteCard = (id) =>{
-    bords = JSON.parse(localStorage.getItem('@order'));
-    if(bords !== null){
-        for(let i = 0; i < bords.length; i++) {
-            let bord = bords[i];
-            for(let j = 0; j < bord.length; j++) {
-                if(id === parseInt(bord[j])){
-                    bords[i].splice(j, 1);
-                    return saveOrder(bords);
-                }
-            }
-        }
-    }
+    bords = bords.map(card => card.filter(i => i != id));
+    saveOrder(bords);
 }; 
+
+const progressWidget = (bords) => {
+
+    let percentage = bords.reduce((acc, bord, index) => {
+        if(index === 3) return (bord.length)/(acc + bord.length) *100;
+        return acc + bord.length;
+    }, 0);
+
+    $( function() {
+
+        $( "#progressbar" ).progressbar({
+            value: percentage ? percentage : 0.1
+        });
+    });
+};
+
+const tooltip = () => {
+    $( function() {
+        $( document ).tooltip({
+            tooltipClass: "tooltip",
+        });
+    });
+};
+
+const updateDescription = (newText, id) => {
+    dataCards.cards[id].description = newText;
+    saveCards(dataCards);
+};
+
+const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
+
+const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
 
 const dialogWiget = () =>{
 
@@ -263,8 +277,7 @@ const dialogWiget = () =>{
                     saveCards(dataCards);
                 }
             });
-            
-        } );
+        });
 
         //Custom widget
         $( function() {
@@ -280,10 +293,10 @@ const dialogWiget = () =>{
                     this._on( this._button, {
                         // _on won't call random when widget is disabled
                         click: "random"
-                      });
-                    
-                 },
-                 _setOption: function(key, value) { 
+                    });
+                },
+                 
+                _setOption: function(key, value) { 
                     switch (key) { 
                        case "width": 
                        this._button.width(value); 
@@ -295,15 +308,15 @@ const dialogWiget = () =>{
                        this._button.css("background-color",value);
                        break; 
                     } 
-                 },
+                },
 
-                 random: function(  ) {
+                random: function(  ) {
                     colors = [
-                        ['#6B7280', 'bg-gray-500'],
-                        ['#EF4444', 'bg-red-500'],
-                        ['#F59E0B', 'bg-yellow-500'],
-                        ['#10B981', 'bg-green-500'],
-                        ['#3B82F6', 'bg-blue-500'],
+                        ['#6B7280', 'gray'],
+                        ['#EF4444', 'red'],
+                        ['#F59E0B', 'yellow'],
+                        ['#10B981', 'green'],
+                        ['#3B82F6', 'blue'],
                     ];
 
                     let randomColor = colors[Math.floor(Math.random()*colors.length)];
@@ -312,12 +325,11 @@ const dialogWiget = () =>{
                         randomColor = colors[Math.floor(Math.random() * colors.length)];
                     }
 
-                    
                     this._button.css("background-color", randomColor[0]); 
                     dataCards.cards[card.id].color = randomColor[0];   
                     dataCards.cards[card.id].class = randomColor[1];   
                     saveCards(dataCards);
-                  },
+                },
             });
            
             // Initialize with default options
@@ -328,48 +340,4 @@ const dialogWiget = () =>{
     });
 };
 
-const progressWidget = () => {
-    let completed = 0;
-    let total = 0;
-    if(bords !== null){
-        for(let i = 0; i < bords.length; i++) {
-            let bord = bords[i];
-            for(let j = 0; j < bord.length; j++) {
-                total++
-                if(dataCards.cards[bord[j]].position == 'blue') completed++;
-            }
-        }
-    }
-    
-    let value = (completed/total)*100;
-    if(value == 0) value = 0.1;
-
-    console.log(value);
-
-    $( function() {
-
-        $( "#progressbar" ).progressbar({
-            value: value
-        });
-      } );
-}
-
-const tooltip = () => {
-    $( function() {
-        $( document ).tooltip({
-            tooltipClass: "tooltip",
-        });
-      } );
-}
-
-const updateDescription = (newText, id) => {
-    dataCards.cards[id].description = newText;
-    saveCards(dataCards);
-};
-
-const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
-
-const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
-
-const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
 
