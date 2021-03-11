@@ -12,7 +12,7 @@ This is a Kanban board app built with jquery and tailwind. Works with localStora
 <!--Insert Installation example. ex, npm install... -->
 Open your terminal and then type
 ```
-$ git clone https://github.com/EnzoBomark/Weather-app.git
+$ git clone https://github.com/chas-academy/u06-trello-clone-EnzoBomark.git
 ```
 This clones the repo
 
