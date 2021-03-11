@@ -12,9 +12,6 @@ body{
     max-height: 100vh;
 }
 
-main{
-}
-
 .boards {
     display: flex;
     justify-content: space-between;
@@ -59,6 +56,7 @@ main{
   border-top: 3px solid#3B82F6; 
 }
 
+//JQUERY STYLE
 .ui-sortable-placeholder { 
     opacity: 0.4;
     visibility: visible !important; 
@@ -175,4 +173,7 @@ main{
   padding: 3px;
   border-radius: 0 5px 5px 5px;
   border: 1px solid black;
+  width: 100px;
+  user-select: none;
+  cursor: pointer;
 }

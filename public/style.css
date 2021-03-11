@@ -186,5 +186,11 @@ body {
   padding: 3px;
   border-radius: 0 5px 5px 5px;
   border: 1px solid black;
+  width: 100px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  cursor: pointer;
 }
 /*# sourceMappingURL=style.css.map */
