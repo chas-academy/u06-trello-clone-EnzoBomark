@@ -7,7 +7,7 @@ let dataCards = {
         maxid:-1 
     } 
 };
-let bords = [];
+
 let dataPositions = [
     {pos:"one", title:"to do"},
     {pos:"two", title:"in progress"},
@@ -17,14 +17,12 @@ let dataPositions = [
 
 //initialize
 $(document).ready(()=>{
-
     // Create Kanban Board
     initializeKanbanBoards();
     // Display cards inside localStorage
     if(JSON.parse(localStorage.getItem('@data'))){
         dataCards = JSON.parse(localStorage.getItem('@data'));
-        bords = JSON.parse(localStorage.getItem('@order'));
-        initializeComponents(dataCards, bords);
+        initializeComponents(dataCards);
     }
     
     $('#add').click(()=>{
@@ -49,8 +47,8 @@ $(document).ready(()=>{
             dataCards.cards.push(newCard);
             dataCards.config.maxid = id;
 
+            saveCards();
             sortable();
-            saveCards(dataCards);
             appendComponents(newCard);
             initializeCards();
         }
@@ -58,13 +56,19 @@ $(document).ready(()=>{
     
     $("#deleteAll").click(() => localStorage.clear());
     tooltip();
-    progressWidget(bords);
     dialogWiget();
-    initializeCards();
     sortable();
+    initializeCards();
+    progressWidget();
 });
 
 //functions
+const saveCards = () => localStorage.setItem('@data', JSON.stringify(dataCards));
+
+const initializeComponents = (data) => data.order.forEach(bord => bord.forEach(index => appendComponents(data.cards[index])));
+
+const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
+
 const sortable = () => {
    
     $(function() {
@@ -77,28 +81,24 @@ const sortable = () => {
                     saveCards(dataCards);
                 },
                 stop: function () {
-                    let bords = [
-                    $('#one').sortable("toArray"), 
-                    $('#two').sortable("toArray"),
-                    $('#three').sortable("toArray"),
-                    $('#four').sortable("toArray"),
-                    ];
-
-                    saveOrder(bords);
-                    progressWidget(bords);
+                   order();
                 }
             })
         .disableSelection();
-        let bords = [
-            $('#one').sortable("toArray"), 
-            $('#two').sortable("toArray"),
-            $('#three').sortable("toArray"),
-            $('#four').sortable("toArray"),
-            ];
-
-            saveOrder(bords);
-
+        order();
     });
+};
+
+const order = () =>{
+    dataCards.order = [
+        $('#one').sortable("toArray"), 
+        $('#two').sortable("toArray"),
+        $('#three').sortable("toArray"),
+        $('#four').sortable("toArray"),
+        ];
+
+        saveCards();
+        progressWidget();
 };
 
 const initializeKanbanBoards = () => {
@@ -112,13 +112,8 @@ const initializeKanbanBoards = () => {
     });
 };
 
-const initializeComponents = (dataArray, bords) => bords.forEach(bord => bord.forEach(index => appendComponents(dataArray.cards[index])));
-
-const initializeCards = () => cards = document.querySelectorAll('.kanbanCard');
-
 const appendComponents = (card) =>{
     //creates new card inside of the todo area
-
     const htmlElements = `
         <div id=${card.id.toString()} class="relative kanbanCard ${card.class}" onclick="dialogWiget(${card.id.toString()})">
             <h4 class="text-xl font-medium">${(card.title != null) ? ((card.title.length < 16) ? card.title : card.title.substring(0,16) + "...") : "" }</h4>
@@ -175,10 +170,10 @@ const appendComponents = (card) =>{
             
             <div id="tabs-1-${card.id.toString()}">
                 <textarea class="resize-none text-md rounded-md px-8 py-5 bg-gray-100 w-full my-3 h-72" contenteditable="true" onblur="updateDescription(this.value.toString(), ${card.id.toString()})">${card.description}</textarea>
-                <div class="w-3/12 absolute left-5 bottom-5">
-                    <input class="w-11/12 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-black rounded shadow ripple waves-light hover:shadow-lg focus:outline-none cursor-pointer placeholder-white" type="text" id="datepicker-${card.id.toString()}" placeholder="${(dataCards.cards[card.id].date) ? dataCards.cards[card.id].date : 'Date'}">
+                <div class="flex w-5/12 justify-around absolute left-5 bottom-5">
+                    <div id="my-widget-${card.id}" title="Choose a color"></div>
+                    <input class="w-32 px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-black rounded shadow hover:shadow-lg focus:outline-none cursor-pointer placeholder-white" type="text" id="datepicker-${card.id.toString()}" placeholder="${(dataCards.cards[card.id].date) ? dataCards.cards[card.id].date : 'Date'}">
                 </div>
-                <div id="my-widget-${card.id}" class="absolute left-36 bottom-4"></div>
             </div>
             
             <div id="tabs-2-${card.id.toString()}">
@@ -204,13 +199,13 @@ const togglePriority = (span) => {
 };
 
 const deleteCard = (id) =>{
-    bords = bords.map(card => card.filter(i => i != id));
-    saveOrder(bords);
+    dataCards.order = dataCards.order.map(card => card.filter(i => i != id));
+    saveCards();
 }; 
 
-const progressWidget = (bords) => {
+const progressWidget = () => {
 
-    let percentage = bords.reduce((acc, bord, index) => {
+    let percentage = dataCards.order.reduce((acc, bord, index) => {
         if(index === 3) return (bord.length)/(acc + bord.length) *100;
         return acc + bord.length;
     }, 0);
@@ -235,10 +230,6 @@ const updateDescription = (newText, id) => {
     dataCards.cards[id].description = newText;
     saveCards(dataCards);
 };
-
-const saveCards = (dataCards) => localStorage.setItem('@data', JSON.stringify(dataCards));
-
-const saveOrder = (bords) => localStorage.setItem('@order', JSON.stringify(bords));
 
 const dialogWiget = () =>{
 
@@ -284,7 +275,7 @@ const dialogWiget = () =>{
             $.widget( "custom.colorize", {
                 
                 _create: function() { 
-                    this._button = $("<button>", { "class": "rounded-full focus:outline-none"}); 
+                    this._button = $("<button>", { "class": "rounded-md focus:outline-none"}); 
                     this._button.width(this.options.width) 
                     this._button.height(this.options.height) 
                     this._button.css("background-color", this.options.color);    
@@ -334,7 +325,7 @@ const dialogWiget = () =>{
            
             // Initialize with default options
             $( `#my-widget-${card.id}` ).colorize();
-            $( `#my-widget-${card.id}` ).colorize("option", {width:30,height:30,color: dataCards.cards[card.id].color});
+            $( `#my-widget-${card.id}` ).colorize("option", {width:40,height:40,color: dataCards.cards[card.id].color});
          
         });
     });
