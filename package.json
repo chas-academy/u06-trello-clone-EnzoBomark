@@ -1,0 +1,31 @@
+{
+  "homepage": "http://EnzoBomark.github.io/u06-trello-clone-enzobomark",
+  "name": "u06-trello-clone-enzobomark",
+  "version": "1.0.0",
+  "description": "* [Sass](https://sass-lang.com)\r * [Tailwind](https://tailwindcss.com/)\r * [Jquery](https://jquery.com/)\r * [JqueryUi](https://jqueryui.com/)",
+  "main": "postcss.config.js",
+  "dependencies": {
+    "autoprefixer": "^10.2.4",
+    "jquery": "^3.5.1",
+    "postcss": "^8.2.6",
+    "postcss-cli": "^8.3.1",
+    "tailwindcss": "^2.0.3"
+  },
+  "devDependencies": {
+    "gh-pages": "^3.1.0"
+  },
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chas-academy/u06-trello-clone-EnzoBomark.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chas-academy/u06-trello-clone-EnzoBomark/issues"
+  }
+}
