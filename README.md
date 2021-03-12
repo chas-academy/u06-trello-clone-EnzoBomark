@@ -19,7 +19,7 @@ $ git clone https://github.com/chas-academy/u06-trello-clone-EnzoBomark.git
 ```
 This clones the repo
 
-*You are done!* Now you can start editing the React project in the new folder that's created.
+*You are done!* 
 
 ### Code Example
 <!--Insert small code example-->
